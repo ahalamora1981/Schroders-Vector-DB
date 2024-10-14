@@ -1,0 +1,7 @@
+chroma_db_name: chroma_db
+
+chunk_size: 500
+chunk_overlap: 150
+
+embedding_model_name: bge-m3
+rerank_model_name: bge-reranker-v2-m3

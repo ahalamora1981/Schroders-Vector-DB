@@ -13,7 +13,7 @@ MODEL_NAME = config["rerank_model_name"]
 reranker_path = Path.cwd() / 'models' / MODEL_NAME
 reranker = FlagReranker(reranker_path, use_fp16=True) 
 
-def get_reranker_scores(query: str, contents: str, normalize: bool = True) -> list[np.float64]:
+def get_rerank_scores(query: str, contents: str, normalize: bool = True) -> list[np.float64]:
     query_content_pairs = [(query, content) for content in contents]
     scores = reranker.compute_score(query_content_pairs, normalize=normalize)
     return scores
@@ -22,5 +22,5 @@ def get_reranker_scores(query: str, contents: str, normalize: bool = True) -> li
 if __name__ == "__main__":
     query = "What is BGE M3?"
     contents = ["Defination of BM25", "What is BGE M3?"]
-    scores = get_reranker_scores(query, contents)
+    scores = get_rerank_scores(query, contents)
     print(scores)

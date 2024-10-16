@@ -56,6 +56,25 @@ def create_collection(collection_name: str) -> HttpResponse:
         }
     )
 
+@app.get("/list-all-collections")
+def list_all_collections() -> HttpResponse:
+    response = chroma_db.list_all_collections()
+
+    if not response.ok:
+        logger.error(response.message)
+        return HttpResponse(
+            ok=response.ok,
+            message=response.message,
+        )
+    
+    return HttpResponse(
+        ok=response.ok,
+        message=response.message,
+        data={
+            "collections": response.data['collections']
+        }
+    )
+
 @app.get("/get-collection")
 def get_collection(collection_name: str) -> HttpResponse:
     response = chroma_db.get_collection(collection_name)
@@ -115,6 +134,30 @@ def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
         )
     
     collection = response.collection
+    
+    if not document_name:
+        return HttpResponse(
+            ok=False,
+            message="参数 document_name 不能为空。",
+            data=None,
+        )
+    
+    if not document_id:
+        return HttpResponse(
+            ok=False,
+            message="参数 document_id 不能为空。",
+            data=None,
+        )
+    
+    if not document:
+        return HttpResponse(
+            ok=False,
+            message="参数 document 不能为空。",
+            data=None,
+        )
+
+    if not metadata:
+        metadata = {}
     
     response = chroma_db.add_document_to_collection(
         collection=collection,
@@ -191,8 +234,8 @@ def get_chunks(
         data=response.data,
     )
 
-@app.get("/delete-chunks")
-def delete_chunks(
+@app.get("/delete-document")
+def delete_document(
     collection_name: str,
     document_id: str | None = None, 
     document_name: str | None = None,
@@ -237,7 +280,7 @@ def delete_chunks(
     
     count = response_get.data['chunks_count']
 
-    response_delete = chroma_db.delete_chunks(collection, document_id, document_name)
+    response_delete = chroma_db.delete_document(collection, document_id, document_name)
 
     if not response.ok:
         logger.error(response_delete.message)
@@ -252,7 +295,47 @@ def delete_chunks(
         message=response_delete.message + f"共删除 {count} 个文档片段。",
         data={"chunks_deleted": count},
     )
+
+@app.get("/query")
+def query(
+    collection_name: str,
+    query: str,
+    n_results: int = 10,
+    rerank: bool = False,
+) -> HttpResponse:
+    response = chroma_db.get_collection(collection_name)
+
+    if not response.ok:
+        logger.error(response.message)
+
+        return HttpResponse(
+            ok=response.ok,
+            message=response.message,
+        )
+
+    collection = response.collection
+
+    response = chroma_db.query(
+        collection=collection, 
+        query=query, 
+        n_results=n_results,
+        rerank=rerank,
+    )
+
+    if not response.ok:
+        logger.error(response.message)
+        
+        return HttpResponse(
+            ok=response.ok,
+            message=response.message,
+        )
     
+    return HttpResponse(
+        ok=response.ok,
+        message=response.message,
+        data=response.data,
+    )
+
 
 if __name__ == "__main__":
     

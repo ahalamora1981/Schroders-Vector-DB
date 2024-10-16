@@ -91,3 +91,27 @@
 2024-10-14 00:09:08.741 | ERROR    | main:delete_collection:86 - 文档集 new 不存在！
 2024-10-14 00:09:15.902 | ERROR    | main:get_collection:64 - 文档集 new 不存在！
 2024-10-14 00:09:15.902 | ERROR    | main:get_collection:64 - 文档集 new 不存在！
+2024-10-15 11:02:26.435 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！
+2024-10-15 11:02:26.435 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！
+2024-10-15 11:12:55.379 | ERROR    | main:get_collection:64 - 文档集 111 不存在！
+2024-10-15 11:12:55.379 | ERROR    | main:get_collection:64 - 文档集 111 不存在！
+2024-10-15 11:12:58.736 | ERROR    | main:delete_collection:86 - 文档集 111 不存在！
+2024-10-15 11:12:58.736 | ERROR    | main:delete_collection:86 - 文档集 111 不存在！
+2024-10-15 11:22:30.742 | ERROR    | main:get_collection:64 - 文档集 222 不存在！
+2024-10-15 11:22:30.742 | ERROR    | main:get_collection:64 - 文档集 222 不存在！
+2024-10-15 11:22:35.804 | ERROR    | main:get_collection:64 - 文档集 111 不存在！
+2024-10-15 11:22:35.804 | ERROR    | main:get_collection:64 - 文档集 111 不存在！
+2024-10-15 11:22:43.154 | ERROR    | main:get_collection:64 - 文档集 new 不存在！
+2024-10-15 11:22:43.154 | ERROR    | main:get_collection:64 - 文档集 new 不存在！
+2024-10-15 11:22:54.347 | ERROR    | main:get_collection:64 - 文档集 new_collection 不存在！
+2024-10-15 11:22:54.347 | ERROR    | main:get_collection:64 - 文档集 new_collection 不存在！
+2024-10-15 11:40:28.076 | ERROR    | main:add_document_to_collection:109 - 文档集 1 不存在！
+2024-10-15 11:40:28.076 | ERROR    | main:add_document_to_collection:109 - 文档集 1 不存在！
+2024-10-15 12:03:41.778 | ERROR    | main:get_chunks:194 - 文档集 去 不存在！
+2024-10-15 12:03:41.778 | ERROR    | main:get_chunks:194 - 文档集 去 不存在！
+2024-10-15 12:49:44.039 | ERROR    | main:delete_document:241 - 文档集 v 不存在！
+2024-10-15 12:49:44.039 | ERROR    | main:delete_document:241 - 文档集 v 不存在！
+2024-10-15 13:22:15.142 | ERROR    | main:query:301 - 错误信息: Expected where to be a dict, got 3
+2024-10-15 13:22:15.142 | ERROR    | main:query:301 - 错误信息: Expected where to be a dict, got 3
+2024-10-15 14:31:25.854 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！
+2024-10-15 14:31:25.854 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！

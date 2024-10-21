@@ -116,6 +116,15 @@ def add_document_to_collection(
     document: str,
     metadata: dict | None = None,
 ) -> CollectionResponse:
+    chunks = get_chunks(collection, document_id)
+    
+    if chunks.ok:
+        if chunks.data['chunks_count'] > 0:
+            return CollectionResponse(
+                ok=False,
+                message=f"文档ID {document_id} 已经存在！",
+            )
+
     texts = text_splitter.split_text(document) 
     embeddings = get_embeddings(texts)
     
@@ -151,7 +160,7 @@ def get_chunks(
     document_name: str | None = None,
 ) -> CollectionResponse:
     where = {}
-
+    
     if document_id:
         where['document_id'] = document_id
 

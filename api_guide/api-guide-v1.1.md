@@ -8,6 +8,8 @@
 
 ## 接口列表
 
+---
+
 ### 1. 创建文档集 (Create Collection)
 
 #### 请求
@@ -38,6 +40,8 @@ GET http://10.101.100.13:8105/create-collection?collection_name=my_collection
 }
 ```
 
+---
+
 ### 2. 列出所有文档集 (List All Collections)
 
 #### 请求
@@ -62,6 +66,8 @@ GET http://10.101.100.13:8105/list-all-collections
   }
 }
 ```
+
+---
 
 ### 3. 获取文档集 (Get Collection)
 
@@ -93,6 +99,8 @@ GET http://10.101.100.13:8105/get-collection?collection_name=my_collection
 }
 ```
 
+---
+
 ### 4. 删除文档集 (Delete Collection)
 
 #### 请求
@@ -117,6 +125,8 @@ GET http://10.101.100.13:8105/delete-collection?collection_name=my_collection
   "data": null
 }
 ```
+
+---
 
 ### 5. 添加文档 (Add Document)
 
@@ -161,6 +171,8 @@ Content-Type: application/json
   }
 }
 ```
+
+---
 
 ### 6. 获取文档片段 (Get Chunks)
 
@@ -218,6 +230,8 @@ GET http://10.101.100.13:8105/get-chunks?collection_name=my_collection&document_
 }
 ```
 
+---
+
 ### 7. 删除文档 (Delete Document)
 
 #### 请求
@@ -253,6 +267,8 @@ GET http://10.101.100.13:8105/delete-document?collection_name=my_collection&docu
   }
 }
 ```
+
+---
 
 ### 8. 查询 (Query)
 

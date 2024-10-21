@@ -115,3 +115,5 @@
 2024-10-15 13:22:15.142 | ERROR    | main:query:301 - 错误信息: Expected where to be a dict, got 3
 2024-10-15 14:31:25.854 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！
 2024-10-15 14:31:25.854 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！
+2024-10-21 11:24:58.189 | ERROR    | main:add_document_to_collection:177 - 文档ID 1234 已经存在！
+2024-10-21 11:24:58.189 | ERROR    | main:add_document_to_collection:177 - 文档ID 1234 已经存在！

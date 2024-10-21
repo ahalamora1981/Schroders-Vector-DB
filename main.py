@@ -1,3 +1,4 @@
+import yaml
 import uvicorn
 from pathlib import Path
 from loguru import logger
@@ -6,6 +7,11 @@ from pydantic import BaseModel, ConfigDict
 
 from packages import chroma_db
 
+
+config_path = Path.cwd() / "config.yaml"
+with open(config_path, "r") as f:
+    config = yaml.safe_load(f)
+    
 logger_path = Path.cwd() / "logs" / "app.log"
 logger_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -341,7 +347,7 @@ if __name__ == "__main__":
     
     uvicorn.run(
         "main:app", 
-        host="localhost", 
-        port=8000,
+        host=config['host'], 
+        port=config['port'],
         reload=True,
     )

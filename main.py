@@ -4,6 +4,7 @@ from pathlib import Path
 from loguru import logger
 from fastapi import FastAPI
 from pydantic import BaseModel, ConfigDict
+from transformers import AutoTokenizer
 
 from packages import chroma_db
 
@@ -20,6 +21,9 @@ logger.add(
     rotation="10 MB", 
     compression="zip"
 )
+
+tokenizer_path = Path.cwd() / "models" / "qwen25-72b-tokenizer"
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
 
 app = FastAPI()
 
@@ -39,6 +43,28 @@ class AddDocumentRequest(BaseModel):
     document: str
     metadata: dict | None = None
 
+
+class CountTokensRequest(BaseModel):
+    query: str = None
+    
+
+@app.post("/count-tokens")
+def count_tokens(query_data: CountTokensRequest):
+    query = query_data.query.strip()
+    if not query:
+        return {
+            "ok": False,
+            "message": "No query provided",
+            "tokens_length": None
+        }
+
+    tokens = tokenizer.encode(query, add_special_tokens=True)
+    
+    return {
+        "ok": True,
+        "message": "Tokens counted successfully",
+        "tokens_length": len(tokens)
+    }
 
 @app.get("/create-collection")
 def create_collection(collection_name: str) -> HttpResponse:

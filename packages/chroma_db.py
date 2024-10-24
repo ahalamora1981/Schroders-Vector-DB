@@ -1,5 +1,6 @@
 import yaml
 import chromadb
+from chromadb import Settings
 from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -17,7 +18,10 @@ CHUNK_SIZE = config["chunk_size"]
 CHUNK_OVERLAP = config["chunk_overlap"]
 
 chroma_client_path = str(Path.cwd() / "chroma" / CHROMA_DB_NAME)
-chroma_client = chromadb.PersistentClient(path=chroma_client_path)
+chroma_client = chromadb.PersistentClient(
+    path=chroma_client_path,
+    settings=Settings(anonymized_telemetry=False),
+)
 
 text_splitter = RecursiveCharacterTextSplitter(
     separators=["\n\n", "\n", " ", ".", ",", "!", "?", "，", "、", "。", "！", "？", ""],

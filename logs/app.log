@@ -117,3 +117,7 @@
 2024-10-15 14:31:25.854 | ERROR    | main:create_collection:42 - 文档集 new 已经存在！
 2024-10-21 11:24:58.189 | ERROR    | main:add_document_to_collection:177 - 文档ID 1234 已经存在！
 2024-10-21 11:24:58.189 | ERROR    | main:add_document_to_collection:177 - 文档ID 1234 已经存在！
+2024-12-15 20:41:00.980 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！
+2024-12-15 20:41:00.980 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！
+2024-12-15 20:46:14.014 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！
+2024-12-15 20:46:14.014 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！

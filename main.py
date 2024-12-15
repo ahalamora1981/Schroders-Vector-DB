@@ -23,7 +23,7 @@ logger.add(
 )
 
 tokenizer_path = Path.cwd() / "models" / "qwen25-72b-tokenizer"
-tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+tokenizer = AutoTokenizer.from_pretrained(tokenizer_path) 
 
 app = FastAPI()
 
@@ -41,12 +41,20 @@ class AddDocumentRequest(BaseModel):
     document_name: str
     document_id: str
     document: str
+    category: str | None = None
+    type: str | None = None
+    file_name: str | None = None
+    law_name: str | None = None
+    md5: str | None = None
     metadata: dict | None = None
+    chunk_size: int | None = None
+    chunk_overlap: int | None = None
+    separator: str | None = None
 
 
 class CountTokensRequest(BaseModel):
     query: str = None
-    
+
 
 @app.post("/count-tokens")
 def count_tokens(query_data: CountTokensRequest):
@@ -128,6 +136,23 @@ def get_collection(collection_name: str) -> HttpResponse:
             }
         },
     )
+
+@app.get("/get-all-metadatas-in-collection")
+def get_all_metadatas_in_collection(collection_name: str) -> HttpResponse:
+    response = chroma_db.list_all_metadatas_in_collection(collection_name)
+    
+    if not response.ok:
+        logger.error(response.message)
+        return HttpResponse(
+            ok=response.ok,
+            message=response.message,
+        )
+        
+    return HttpResponse(
+        ok=response.ok,
+        message=response.message,
+        data=response.data,
+    )
     
 @app.get("/delete-collection")
 def delete_collection(collection_name: str) -> HttpResponse:
@@ -147,13 +172,36 @@ def delete_collection(collection_name: str) -> HttpResponse:
     )
     
 @app.post("/add-document")
-def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
+async def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
+    
+    if item.category is not None and item.category not in ['法规', '标准', '内部制度']:
+        return HttpResponse(
+            ok=False,
+            message="参数 category 只能是法规、标准、内部制度中的一个。",
+            data=None,
+        )
+    
+    if item.type is not None and item.type not in ['正文', '附件']:
+        return HttpResponse(
+            ok=False,
+            message="参数 type 只能是正文、附件中的一个。",
+            data=None,
+        )
+
     collection_name = item.collection_name
     document_name = item.document_name
     document_id = item.document_id
     document = item.document
+    category = item.category
+    type = item.type
+    file_name = item.file_name
+    law_name = item.law_name
+    md5 = item.md5
     metadata = item.metadata
-        
+    chunk_size = item.chunk_size
+    chunk_overlap = item.chunk_overlap
+    separator = item.separator
+
     response = chroma_db.get_collection(collection_name)
     
     if not response.ok:
@@ -188,15 +236,33 @@ def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
             data=None,
         )
 
-    if not metadata:
-        metadata = {}
+    metadata = metadata or {}
+
+    metadata['document_name'] = document_name
+    metadata['document_id'] = document_id
+
+    if category is not None:
+        metadata['category'] = category
+
+    if type is not None:
+        metadata['type'] = type
+
+    if file_name is not None:
+        metadata['file_name'] = file_name
+
+    if law_name is not None:
+        metadata['law_name'] = law_name
+
+    if md5 is not None:
+        metadata['md5'] = md5
     
     response = chroma_db.add_document_to_collection(
         collection=collection,
-        document_name=document_name,
-        document_id=document_id,
         document=document,
         metadata=metadata,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
+        separator=separator,
     )
 
     if not response.ok:
@@ -334,7 +400,13 @@ def query(
     query: str,
     n_results: int = 10,
     rerank: bool = False,
+    doc_group: str | None = None
 ) -> HttpResponse:
+    where = {}
+
+    if doc_group is not None:
+        where['doc_group'] = doc_group
+
     response = chroma_db.get_collection(collection_name)
 
     if not response.ok:
@@ -346,12 +418,19 @@ def query(
         )
 
     collection = response.collection
+    
+    if n_results > collection.count():
+        return HttpResponse(
+            ok=False,
+            message=f"要获取的文本数量({n_results})不能大于文档集文本总数({collection.count()})",
+        )
 
     response = chroma_db.query(
         collection=collection, 
         query=query, 
         n_results=n_results,
         rerank=rerank,
+        where=where,
     )
 
     if not response.ok:

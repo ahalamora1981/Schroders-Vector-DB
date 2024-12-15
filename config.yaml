@@ -1,5 +1,5 @@
-host: localhost
-# host: "0.0.0.0"
+# host: localhost
+host: "0.0.0.0"
 port: 8000
 
 chroma_db_name: chroma_db
@@ -9,3 +9,6 @@ chunk_overlap: 150
 
 embedding_model_name: bge-m3
 rerank_model_name: bge-reranker-v2-m3
+
+n_results: 8
+rerank_multiple: 5

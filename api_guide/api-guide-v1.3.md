@@ -139,11 +139,13 @@ GET http://10.101.100.13:8105/delete-collection?collection_name=my_collection
   - `document_name` (string): 文档名称
   - `document_id` (string): 文档 ID
   - `document` (string): 文档内容
-  - `category` (string): 文档类别 | 可选项：[法规、标准、内部制度]
-  - `type` (string): 文档类型 | 可选项：[正文、附件]
-  - `file_name` (string, 可选): 文件名称
-  - `law_name` (string, 可选): 法律名称
-  - `md5` (string, 可选): 文件 MD5 值
+  - `metadata` (object, 可选): 文档元数据
+    - `pub_org_name_list` (list[string], 可选): 发布机构名称列表
+    - `category` (string, 可选): 文档类别 | 可选项：[法规、标准、内部制度]
+    - `type` (string, 可选): 文档类型 | 可选项：[正文、附件]
+    - `file_name` (string, 可选): 文件名称
+    - `law_name` (string, 可选): 法律名称
+    - `md5` (string, 可选): 文件 MD5 值
 
 #### 示例
 
@@ -152,15 +154,18 @@ POST http://10.101.100.13:8105/add-document
 Content-Type: application/json
 
 {
-    "collection_name": "my_collection",
-    "document_name": "合同法",
-    "document_id": "12345",
-    "document": "合同法的内容...",
+  "collection_name": "my_collection",
+  "document_name": "合同法",
+  "document_id": "12345",
+  "document": "合同法的内容...",
+  "metadata": {
+    "pub_org_name_list": ["公安部", "司法部", "财政部"],
     "category": "法规",
     "type": "正文",
     "file_name": "合同法.pdf",
     "law_name": "合同法",
-    "md5": "1234567890",
+    "md5": "1234567890"
+  }
 }
 ```
 
@@ -170,10 +175,13 @@ Content-Type: application/json
 {
   "ok": true,
   "message": "文档已添加到文档集 my_collection 中。",
-  "collection": null,
   "data": {
-    "name": "my_collection",
-    "chunks_count": 3
+    "document":
+    {
+      "name": "document_name",
+      "id": "document_id",
+      "chunks_count": 3
+    }
   }
 }
 ```
@@ -223,6 +231,16 @@ GET http://10.101.100.13:8105/get-chunks?collection_name=my_collection&document_
         "file_name": "合同法.pdf",
         "law_name": "合同法",
         "md5": "1234567890",
+        "pub_org_name_1": "公安部",
+        "pub_org_name_2": "司法部",
+        "pub_org_name_3": "财政部",
+        "pub_org_name_4": "<|None|>",
+        "pub_org_name_5": "<|None|>",
+        "pub_org_name_6": "<|None|>",
+        "pub_org_name_7": "<|None|>",
+        "pub_org_name_8": "<|None|>",
+        "pub_org_name_9": "<|None|>",
+        "pub_org_name_10": "<|None|>"
       },
       {
         "document_name": "合同法",
@@ -232,6 +250,16 @@ GET http://10.101.100.13:8105/get-chunks?collection_name=my_collection&document_
         "file_name": "合同法.pdf",
         "law_name": "合同法",
         "md5": "1234567890",
+        "pub_org_name_1": "公安部",
+        "pub_org_name_2": "司法部",
+        "pub_org_name_3": "财政部",
+        "pub_org_name_4": "<|None|>",
+        "pub_org_name_5": "<|None|>",
+        "pub_org_name_6": "<|None|>",
+        "pub_org_name_7": "<|None|>",
+        "pub_org_name_8": "<|None|>",
+        "pub_org_name_9": "<|None|>",
+        "pub_org_name_10": "<|None|>"
       },
       {
         "document_name": "合同法",
@@ -241,6 +269,16 @@ GET http://10.101.100.13:8105/get-chunks?collection_name=my_collection&document_
         "file_name": "合同法.pdf",
         "law_name": "合同法",
         "md5": "1234567890",
+        "pub_org_name_1": "公安部",
+        "pub_org_name_2": "司法部",
+        "pub_org_name_3": "财政部",
+        "pub_org_name_4": "<|None|>",
+        "pub_org_name_5": "<|None|>",
+        "pub_org_name_6": "<|None|>",
+        "pub_org_name_7": "<|None|>",
+        "pub_org_name_8": "<|None|>",
+        "pub_org_name_9": "<|None|>",
+        "pub_org_name_10": "<|None|>"
       }
     ],
     "documents": [
@@ -297,18 +335,26 @@ GET http://10.101.100.13:8105/delete-document?collection_name=my_collection&docu
 
 #### 请求
 
-- 方法: `GET`
+- 方法: `POST`
 - 路径: `/query`
-- 参数:
+- 请求体:
   - `collection_name` (string): 文档集名称
   - `query` (string): 查询文本
   - `n_results` (integer): 返回结果数量
   - `rerank` (boolean, 可选): 是否重新排序
+  - `pub_org_name_list` (list[string], 可选): 发布机构名称列表
 
 #### 示例
 
 ```
-GET http://10.101.100.13:8105/query?collection_name=my_collection&query=未成年人&n_results=2&rerank=true
+POST http://10.101.100.13:8105/query
+{
+  "collection_name": "my_collection",
+  "query": "基金产品",
+  "n_results": 10,
+  "rerank": true,
+  "pub_org_name_list": ["发行机构1", "发行机构2"]
+}
 ```
 
 #### 响应

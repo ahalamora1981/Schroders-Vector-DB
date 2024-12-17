@@ -121,3 +121,25 @@
 2024-12-15 20:41:00.980 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！
 2024-12-15 20:46:14.014 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！
 2024-12-15 20:46:14.014 | ERROR    | main:create_collection:77 - 文档集 law 已经存在！
+2024-12-17 09:36:42.626 | ERROR    | main:add_document_to_collection:253 - 文档ID 1217-1-id 已经存在！
+2024-12-17 09:36:42.626 | ERROR    | main:add_document_to_collection:253 - 文档ID 1217-1-id 已经存在！
+2024-12-17 10:10:10.333 | ERROR    | main:add_document_to_collection:278 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:10:10.333 | ERROR    | main:add_document_to_collection:278 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:16:23.520 | ERROR    | main:add_document_to_collection:278 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:16:23.520 | ERROR    | main:add_document_to_collection:278 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:18:39.029 | ERROR    | main:add_document_to_collection:275 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:18:39.029 | ERROR    | main:add_document_to_collection:275 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:19:50.949 | ERROR    | main:add_document_to_collection:277 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:19:50.949 | ERROR    | main:add_document_to_collection:277 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:22:41.810 | ERROR    | main:add_document_to_collection:277 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:22:41.810 | ERROR    | main:add_document_to_collection:277 - 错误信息: Expected metadata value to be a str, int, float or bool, got None which is a NoneType
+2024-12-17 10:26:51.467 | ERROR    | main:add_document_to_collection:277 - 文档ID 1217-1-id 已经存在！
+2024-12-17 10:26:51.467 | ERROR    | main:add_document_to_collection:277 - 文档ID 1217-1-id 已经存在！
+2024-12-17 10:36:03.005 | ERROR    | main:add_document_to_collection:277 - 文档ID 1217-1-id 已经存在！
+2024-12-17 10:36:03.005 | ERROR    | main:add_document_to_collection:277 - 文档ID 1217-1-id 已经存在！
+2024-12-17 11:32:07.353 | ERROR    | main:query:525 - 错误信息: Expected where value for $and or $or to be a list with at least two where expressions, got [{'$or': [{'pub_org_name_1': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_2': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_3': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_4': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_5': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_6': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_7': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_8': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_9': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_10': {'$in': ['pub_org_name_#3']}}]}]
+2024-12-17 11:32:07.353 | ERROR    | main:query:525 - 错误信息: Expected where value for $and or $or to be a list with at least two where expressions, got [{'$or': [{'pub_org_name_1': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_2': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_3': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_4': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_5': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_6': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_7': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_8': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_9': {'$in': ['pub_org_name_#3']}}, {'pub_org_name_10': {'$in': ['pub_org_name_#3']}}]}]
+2024-12-17 11:40:49.242 | ERROR    | main:query:525 - 错误信息: Expected where value for $and or $or to be a list with at least two where expressions, got [{'md5': '1217-2-md5'}]
+2024-12-17 11:40:49.242 | ERROR    | main:query:525 - 错误信息: Expected where value for $and or $or to be a list with at least two where expressions, got [{'md5': '1217-2-md5'}]
+2024-12-17 15:48:28.856 | ERROR    | main:add_document_to_collection:275 - 错误信息: Expected metadata value to be a str, int, float or bool, got ['pub_org_name_#21', 'pub_org_name_#22'] which is a list
+2024-12-17 15:48:28.856 | ERROR    | main:add_document_to_collection:275 - 错误信息: Expected metadata value to be a str, int, float or bool, got ['pub_org_name_#21', 'pub_org_name_#22'] which is a list

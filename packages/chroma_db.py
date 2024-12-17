@@ -164,6 +164,8 @@ def add_document_to_collection(
     if chunk_overlap is None:
         chunk_overlap=CHUNK_OVERLAP
 
+    print(f"Separator: {separator}")
+
     if separator is None:
         separators = ["\n\n", "\n", " ", ".", ",", "!", "?", "，", "、", "。", "！", "？", " "]
 

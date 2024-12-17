@@ -35,21 +35,40 @@ class HttpResponse(BaseModel):
     data: dict | None = None
 
 
+class DocumentMetadata(BaseModel):
+    category: str = "<|None|>"
+    type: str = "<|None|>"
+    file_name: str = "<|None|>"
+    law_name: str = "<|None|>"
+    md5: str = "<|None|>"
+    doc_group: str = "<|None|>"
+    pub_org_name_list: list[str] | None = None  # 最多10个 
+
+
 class AddDocumentRequest(BaseModel): 
     model_config = ConfigDict(arbitrary_types_allowed=True)
     collection_name: str
     document_name: str
     document_id: str
     document: str
+    metadata: DocumentMetadata
+    chunk_size: int | None = None
+    chunk_overlap: int | None = None
+    separator: str | None = None
+
+
+class DocumentQueryRequest(BaseModel):
+    collection_name: str
+    query: str
+    n_results: int = 10
+    rerank: bool = False
     category: str | None = None
     type: str | None = None
     file_name: str | None = None
     law_name: str | None = None
     md5: str | None = None
-    metadata: dict | None = None
-    chunk_size: int | None = None
-    chunk_overlap: int | None = None
-    separator: str | None = None
+    doc_group: str | None = None
+    pub_org_name_list: list[str] | None = None
 
 
 class CountTokensRequest(BaseModel):
@@ -173,15 +192,51 @@ def delete_collection(collection_name: str) -> HttpResponse:
     
 @app.post("/add-document")
 async def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
+    metadata = item.metadata.model_dump() 
     
-    if item.category is not None and item.category not in ['法规', '标准', '内部制度']:
+    metadata['document_name'] = item.document_name
+    metadata['document_id'] = item.document_id
+
+    # 处理 pub_org_name_list
+    for i in range(10):
+        if i >= len(metadata['pub_org_name_list']):
+            metadata[f'pub_org_name_{i+1}'] = "<|None|>"
+        else:
+            metadata[f'pub_org_name_{i+1}'] = metadata['pub_org_name_list'][i]
+
+    del metadata['pub_org_name_list']
+
+    print(f"Metadata: {metadata}")
+
+    if not item.document_name:
+        return HttpResponse(
+            ok=False,
+            message="参数 document_name 不能为空。",
+            data=None,
+        )
+    
+    if not item.document_id:
+        return HttpResponse(
+            ok=False,
+            message="参数 document_id 不能为空。",
+            data=None,
+        )
+    
+    if not item.document:
+        return HttpResponse(
+            ok=False,
+            message="参数 document 不能为空。",
+            data=None,
+        )
+    
+    if metadata.get('category') is not None and metadata['category'] not in ['法规', '标准', '内部制度']:
         return HttpResponse(
             ok=False,
             message="参数 category 只能是法规、标准、内部制度中的一个。",
             data=None,
         )
     
-    if item.type is not None and item.type not in ['正文', '附件']:
+    if metadata.get('type') is not None and metadata['type'] not in ['正文', '附件']:
         return HttpResponse(
             ok=False,
             message="参数 type 只能是正文、附件中的一个。",
@@ -192,12 +247,6 @@ async def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
     document_name = item.document_name
     document_id = item.document_id
     document = item.document
-    category = item.category
-    type = item.type
-    file_name = item.file_name
-    law_name = item.law_name
-    md5 = item.md5
-    metadata = item.metadata
     chunk_size = item.chunk_size
     chunk_overlap = item.chunk_overlap
     separator = item.separator
@@ -214,47 +263,6 @@ async def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
         )
     
     collection = response.collection
-    
-    if not document_name:
-        return HttpResponse(
-            ok=False,
-            message="参数 document_name 不能为空。",
-            data=None,
-        )
-    
-    if not document_id:
-        return HttpResponse(
-            ok=False,
-            message="参数 document_id 不能为空。",
-            data=None,
-        )
-    
-    if not document:
-        return HttpResponse(
-            ok=False,
-            message="参数 document 不能为空。",
-            data=None,
-        )
-
-    metadata = metadata or {}
-
-    metadata['document_name'] = document_name
-    metadata['document_id'] = document_id
-
-    if category is not None:
-        metadata['category'] = category
-
-    if type is not None:
-        metadata['type'] = type
-
-    if file_name is not None:
-        metadata['file_name'] = file_name
-
-    if law_name is not None:
-        metadata['law_name'] = law_name
-
-    if md5 is not None:
-        metadata['md5'] = md5
     
     response = chroma_db.add_document_to_collection(
         collection=collection,
@@ -280,6 +288,7 @@ async def add_document_to_collection(item: AddDocumentRequest) -> HttpResponse:
         data={
             "document": {
                 "name": document_name,
+                "id": document_id,
                 "chunks_count": response.data['chunks_count'],
             }
         }
@@ -394,20 +403,9 @@ def delete_document(
         data={"chunks_deleted": count},
     )
 
-@app.get("/query")
-def query(
-    collection_name: str,
-    query: str,
-    n_results: int = 10,
-    rerank: bool = False,
-    doc_group: str | None = None
-) -> HttpResponse:
-    where = {}
-
-    if doc_group is not None:
-        where['doc_group'] = doc_group
-
-    response = chroma_db.get_collection(collection_name)
+@app.post("/query")
+def query(item: DocumentQueryRequest) -> HttpResponse:
+    response = chroma_db.get_collection(item.collection_name)
 
     if not response.ok:
         logger.error(response.message)
@@ -419,17 +417,114 @@ def query(
 
     collection = response.collection
     
-    if n_results > collection.count():
+    if item.n_results > collection.count():
         return HttpResponse(
             ok=False,
-            message=f"要获取的文本数量({n_results})不能大于文档集文本总数({collection.count()})",
+            message=f"要获取的文本数量({item.n_results})不能大于文档集文本总数({collection.count()})",
         )
+
+    if item.pub_org_name_list is not None:
+        where = {
+            "$or": [
+                {
+                    "pub_org_name_1": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_2": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_3": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_4": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_5": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_6": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_7": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_8": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_9": {
+                        "$in": item.pub_org_name_list
+                    }
+                },
+                {
+                    "pub_org_name_10": {
+                        "$in": item.pub_org_name_list
+                    }
+                }
+            ]
+        }
+    else:
+        where = {
+            "$and": []
+        }
+
+        if item.category is not None:
+            where['$and'].append({
+                "category": item.category
+            })
+            
+        if item.type is not None:
+            where['$and'].append({
+                "type": item.type
+            })
+            
+        if item.file_name is not None:
+            where['$and'].append({
+                "file_name": item.file_name
+            })
+            
+        if item.law_name is not None:
+            where['$and'].append({
+                "law_name": item.law_name
+            })
+            
+        if item.md5 is not None:
+            where['$and'].append({
+                "md5": item.md5
+            })
+            
+        if item.doc_group is not None:
+            where['$and'].append({
+                "doc_group": item.doc_group
+            })
+
+        if len(where['$and']) == 0:
+            where = {}
+        elif len(where['$and']) == 1:
+            where = where['$and'][0]
+        else:
+            where = where
 
     response = chroma_db.query(
         collection=collection, 
-        query=query, 
-        n_results=n_results,
-        rerank=rerank,
+        query=item.query, 
+        n_results=item.n_results,
+        rerank=item.rerank,
         where=where,
     )
 
